@@ -1,0 +1,49 @@
+class MainСontacts : AppCompatActivity() {
+    lateinit var listview:ListView
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_contacts)
+
+        listview = findViewById(R.id.ListContacts)
+        var listContacts = Contacts.load(this)
+        var ocontact = listContacts.map { "${it.numberphone}           ${it.comment}                                             ${it.namepol}"}
+        var adapter = ArrayAdapter(this,android.R.layout.simple_list_item_1,ocontact)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        listview.adapter = adapter
+    }
+
+    fun dobavit(view: View) {
+        val intent = Intent(this,LoginActivity::class.java)
+        startActivity(intent)
+
+    }
+
+
+}
+Not enough information to infer type variable R
+
+
+
+
+object Contacts {
+    fun save(context: Context, contact: List<ListContacts>){
+        var shar = context.getSharedPreferences("Contacts", Context.MODE_PRIVATE)
+        var gson = Gson()
+        var listContacts = gson.toJson(contact)
+        var ed = shar.edit()
+        ed.putString("Contact", listContacts)
+        ed.apply()
+    }
+    fun load(context: Context): List<ListContacts>{
+        var shar = context.getSharedPreferences("ListContacts", Context.MODE_PRIVATE)
+        var gson = Gson()
+        var listContacts = shar.getString("ListContacts", null)
+        if (listContacts != null) {
+            return gson.fromJson<List<ListContacts>>(
+                listContacts,
+                object : TypeToken<List<ListContacts>>() {}.type
+            )
+        }
+        else return emptyList()
+    }
+}
